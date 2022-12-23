@@ -4,29 +4,42 @@ using System.IO;
 using System.Linq;
 using SecurityDriven.Core;
 
-int numberOfWords = TryReadIntArg(args, 0) ?? 6;
-int numberOfPhrases = TryReadIntArg(args, 1) ?? 1;
-var wordList = LoadWordList();
-
-foreach (var phraseNum in Enumerable.Range(1, numberOfPhrases))
+internal class Program
 {
-    var passphrase =
-        string.Join(' ',
-            Enumerable.Range(0, numberOfWords)
-                .Select(_ => wordList[CryptoRandom.Shared.Next(wordList.Count)]));
+    private static void Main(int words = 4, int phrases = 1, bool requireSpecial = false)
+    {
+        Console.WriteLine($"Words: {words}, Phrases: {phrases}, Require Special Characters: {requireSpecial}");
+        var wordList = LoadWordList();
 
-    Console.Out.WriteLine(passphrase);
+        foreach (var phraseNum in Enumerable.Range(1, phrases))
+        {
+            while (true)
+            {
+                var passphrase =
+                    string.Join(' ',
+                        Enumerable.Range(0, words)
+                            .Select(_ => wordList[CryptoRandom.Shared.Next(wordList.Count)]));
+
+                if (requireSpecial)
+                {
+                    var containsNumbers = passphrase.Any(char.IsDigit);
+                    var containsSpecial = !passphrase.Where(c => c != ' ').All(char.IsLetterOrDigit);
+                    if (!containsNumbers || !containsSpecial)
+                    {
+                        continue;
+                    }
+                }
+
+                Console.Out.WriteLine(passphrase);
+                break;
+            }
+        }
+
+        static IReadOnlyList<string> LoadWordList() =>
+            File
+                .ReadLines("diceware-sv.txt")
+                .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => line.Split(' ')[1])
+                .ToList();
+    }
 }
-
-static IReadOnlyList<string> LoadWordList() =>
-    File
-        .ReadLines("diceware-sv.txt")
-        .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
-        .Select(line => line.Split(' ')[1])
-        .ToList();
-
-static int? TryReadIntArg(string[] args, int index) =>
-    args.Length > index &&
-    int.TryParse(args[index], out var parsed)
-    ? parsed
-    : null;
