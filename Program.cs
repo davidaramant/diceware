@@ -6,7 +6,7 @@ using SecurityDriven.Core;
 
 internal class Program
 {
-    private static void Main(int words = 4, int phrases = 1, bool requireSpecial = false)
+    private static void Main(int words = 4, int phrases = 10, bool requireSpecial = false)
     {
         Console.WriteLine($"Words: {words}, Phrases: {phrases}, Require Special Characters: {requireSpecial}");
         var wordList = LoadWordList();
