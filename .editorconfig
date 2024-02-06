@@ -1,0 +1,10 @@
+root = true
+
+[*]
+charset = utf-8
+max_line_length = 120
+indent_style = tab
+
+# Forces file-scoped namespaces
+csharp_style_namespace_declarations = file_scoped:error
+dotnet_diagnostic.IDE0161.severity = error
