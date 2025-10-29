@@ -8,9 +8,11 @@ namespace DicewarePassphrase;
 
 internal class Program
 {
-	private static void Main(int words = 4, int phrases = 10, bool requireSpecial = true)
+	private static void Main(int words = 4, int phrases = 10, int minCharacters = 15, bool requireSpecial = true)
 	{
-		Console.WriteLine($"Words: {words}, Phrases: {phrases}, Require Special Characters: {requireSpecial}");
+		Console.WriteLine(
+			$"Words: {words}, Phrases: {phrases}, Min Characters: {minCharacters}, Require Special Characters: {requireSpecial}"
+		);
 		var wordList = LoadWordList();
 
 		foreach (var phraseNum in Enumerable.Range(1, phrases))
@@ -30,6 +32,11 @@ internal class Program
 					{
 						continue;
 					}
+				}
+
+				if (passphrase.Length < minCharacters)
+				{
+					continue;
 				}
 
 				Console.Out.WriteLine(passphrase);
